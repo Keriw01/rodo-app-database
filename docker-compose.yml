@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongodb/mongodb-community-server:latest
+    container_name: mongo_db_rodo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: rododetector
+      MONGO_INITDB_ROOT_PASSWORD: u7XRf3NviITymxXOl16E
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data_rodo:/data/db
+
+  api:
+    build: .
+    container_name: fastapi_rodo
+    depends_on:
+      - mongo
+    ports:
+      - "8000:8000"
+    environment:
+      MONGO_URL: "mongodb://rododetector:u7XRf3NviITymxXOl16E@mongo:27017/"
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  mongo_data_rodo:
